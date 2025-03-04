@@ -1,7 +1,8 @@
 export class Player {
-    constructor(name, color) {
+    constructor(name, color, stopExerciseCallback) {
         this.name = name;
         this.color = color;
+        this.stopExerciseCallback = stopExerciseCallback;
         this.x = 100,
         this.y = 100,
         this.width = 30,
@@ -10,6 +11,7 @@ export class Player {
         this.dayCount = 1,
         this.level = 1,
         this.xp = 0;
+        this.xpRequired = 10;
 
         this.performingExercise = false;
         this.performedExercises = [];
@@ -18,11 +20,12 @@ export class Player {
 
     gainXP(amount) {
         this.xp += amount;
-        let xpRequired = 10 * (this.level ** 2);
-        while (this.xp >= xpRequired) {
-            this.xp -= xpRequired;
+        let xpReq = 10 * (this.level ** 2);
+        while (this.xp >= xpReq) {
+            this.xp -= xpReq;
             this.level++;
-            xpRequired = 10 * (this.level ** 2);
+            xpReq = 10 * (this.level ** 2);
+            this.xpRequired = xpReq;
         }
     }
 
@@ -38,6 +41,7 @@ export class Player {
         if (!interactingEquipment || !this.performingExercise) return;
 
         if (interactingEquipment.reps >= interactingEquipment.maxReps) {
+            this.stopExercise(interactingEquipment);
             console.log("Muscle failure! Can't do more reps.");
             interactingEquipment.fatigue += 0.5;
             return;
@@ -45,12 +49,17 @@ export class Player {
 
         interactingEquipment.reps++;
         this.gainXP(1);
+
+        if (interactingEquipment.reps === interactingEquipment.maxReps) {
+            this.stopExercise(interactingEquipment);
+    }
     }
 
     stopExercise(interactingEquipment) {
-        this.canMove = true;
         if (!interactingEquipment) return;
+
         console.log(`Stopped using ${interactingEquipment.name}`);
+
         this.performedExercises.push({
             fatigue: interactingEquipment.fatigue,
             name: interactingEquipment.name, 
@@ -58,7 +67,9 @@ export class Player {
         });
         interactingEquipment.endSet();
         this.performingExercise = false;
-        interactingEquipment = null;
+        this.canMove = true;
+
+        if (this.stopExerciseCallback) this.stopExerciseCallback();
     }
 
     resetFatigue() {

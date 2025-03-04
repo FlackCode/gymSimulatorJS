@@ -11,7 +11,7 @@ export class Game {
         this.canvas.width = 800;
         this.canvas.height = 600;
 
-        this.player = new Player('Flack', 'blue');
+        this.player = new Player('Flack', 'blue', () => {this.interactingEquipment = null;});
         this.inputHandler = new InputHandler(this.player, this);
         this.gymEquipment = [
             new Equipment(300, 200, 50, 50, "gray", "benchPress", "Bench Press", 20, 20),
@@ -43,7 +43,7 @@ export class Game {
         this.drawEquipment(this.gymEquipment, this.ctx);
         this.drawInteractionAreas(this.ctx, this.interactableEquipment);
         this.drawPlayer(this.player, this.ctx);
-        UI.drawUI(this.ctx, this.player.dayCount, this.player.level, this.interactingEquipment, this.gymEquipment, this.interactableEquipment);
+        UI.drawUI(this.ctx, this.player, this.interactingEquipment, this.gymEquipment, this.interactableEquipment);
     }
 
     drawEquipment(gymEquipment, ctx) {
