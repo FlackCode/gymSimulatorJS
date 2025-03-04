@@ -7,13 +7,27 @@ export class UI {
         ctx.fillText(`Level: ${level}`, 10, 40);
         ctx.fillText(`XP: ${xp}/${xpRequired}`, 10, 60);
 
+        const progressBarWidth = 100;
+        const progressBarHeight = 20;
+        const progressBarX = 10;
+        const progressBarY = 65;
+
+        ctx.fillStyle = 'lightgray';
+        ctx.fillRect(progressBarX, progressBarY, progressBarWidth, progressBarHeight);
+
+        const xpProgress = (xp / xpRequired) * progressBarWidth;
+        ctx.fillStyle = 'green';
+        ctx.fillRect(progressBarX + 2, progressBarY + 2, xpProgress, progressBarHeight - 5);
+
+        ctx.fillStyle = 'black';
+
         const welcomeText = "Welcome to the gym!";
         ctx.fillText(welcomeText, ctx.canvas.width / 2 - ctx.measureText(welcomeText).width / 2, 30);
         
         if (interactingEquipment) {
             const { name, maxReps, reps } = interactingEquipment;
-            ctx.fillText(`Using: ${name}`, 10, 80);
-            ctx.fillText(`Reps: ${reps}/${maxReps}`, 10, 100);
+            ctx.fillText(`Using: ${name}`, 10, 100);
+            ctx.fillText(`Reps: ${reps}/${maxReps}`, 10, 120);
         }
 
         ctx.font = '16px Arial';
