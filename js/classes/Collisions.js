@@ -11,8 +11,7 @@ export class Collisions {
                 interactableEquipment.push(equipment);
 
                 if (inputHandler.wasKeyPressed("e")) {
-                    inputHandler.handleInteractions(player, equipment);
-                    player.toggleExercise(equipment.type);
+                    inputHandler.handleKeyPress("e");
                 }
             }
         });

@@ -48,56 +48,57 @@ export class Player {
         UI.updateLevel(this.level);
     }
 
-    toggleExercise(exerciseType) {
-        const equipment = Object.values(this.exercises).find(exercise => exercise.type === exerciseType);
-        if (!equipment) {
-            console.log(`Equipment of type ${exerciseType} not found.`);
-            return
-        }
-        this.centerPlayer(this, equipment);
+    startExercise(interactingEquipment) {
+        if (!interactingEquipment) return;
+        this.centerPlayer(this, interactingEquipment);
+        //this.interactingEquipment.startSet();
+        //this.player.performingExercise = true;
+    }
+    performRep(interactingEquipment) {
+        console.log("Performing rep")
+        if (!interactingEquipment || !this.performingExercise) return;
+        interactingEquipment.reps++;
+        console.log(`Performed rep on ${interactingEquipment.name}: ${interactingEquipment.reps}`);
     }
 
-    performRep() {
-        if (!this.performingExercise || this.currentExercise === this.exercises.nullExercise) {
-            console.log("No active exercise.");
-            return;
-        }
-
-        if (this.currentExercise.reps >= this.currentExercise.maxReps) {
-            console.log("Muscle failure! Can't do more reps.");
-            this.currentExercise.fatigue += 0.5;
-            return;
-        }
-
-        this.currentExercise.reps++;
-        this.gainXP(1);
-        UI.updateReps(this.currentExercise.reps);
+    stopExercise(interactingEquipment) {
+        if (!this.interactingEquipment) return;
+        console.log(`Stopped using ${this.interactingEquipment.name}`);
+        this.interactingEquipment.endSet();
+        this.player.performingExercise = false;
+        this.interactingEquipment = null;
     }
 
+    // performRep() {
+    //     if (!this.performingExercise || this.currentExercise === this.exercises.nullExercise) {
+    //         console.log("No active exercise.");
+    //         return;
+    //     }
 
-    exercise(exercise) {
-        this.performingExercise = true;
-        this.currentExercise = exercise;
-        this.currentExercise.startSet();
-        UI.toggleWeightDisplay(true);
-        UI.updateWeight(this.currentExercise.weight);
-        UI.toggleRepButton(true);
-        console.log(`${this.name} is ${this.currentExercise.name}ing`);
-    }
+    //     if (this.currentExercise.reps >= this.currentExercise.maxReps) {
+    //         console.log("Muscle failure! Can't do more reps.");
+    //         this.currentExercise.fatigue += 0.5;
+    //         return;
+    //     }
 
-    stopExercising(exercise) {
-        this.performingExercise = false;
-        this.performedExercises.push({
-                fatigue: exercise.fatigue,
-                name: exercise.name, 
-                reps: exercise.reps
-        });
-        exercise.endSet();
-        UI.updateReps(0);
-        UI.toggleWeightDisplay(false);
-        UI.toggleRepButton(false);
-        console.log(`${this.name} stopped ${exercise.name}ing`);
-    }
+    //     this.currentExercise.reps++;
+    //     this.gainXP(1);
+    //     UI.updateReps(this.currentExercise.reps);
+    // }
+
+    // stopExercising(exercise) {
+    //     this.performingExercise = false;
+    //     this.performedExercises.push({
+    //             fatigue: exercise.fatigue,
+    //             name: exercise.name, 
+    //             reps: exercise.reps
+    //     });
+    //     exercise.endSet();
+    //     UI.updateReps(0);
+    //     UI.toggleWeightDisplay(false);
+    //     UI.toggleRepButton(false);
+    //     console.log(`${this.name} stopped ${exercise.name}ing`);
+    // }
 
     resetFatigue() {
         this.performedExercises.forEach(performedExercise => {
@@ -125,10 +126,7 @@ export class Player {
     }
 
     centerPlayer(player, equipment) {
-        console.log(equipment);
         player.x = equipment.x + equipment.width / 2 - player.width / 2;
         player.y = equipment.y + equipment.height / 2 - player.height / 2;
-
-        console.log(`Player centered at ${player.x}, ${player.y}`);
     }
 }

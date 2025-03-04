@@ -12,7 +12,7 @@ export class Game {
         this.canvas.height = 600;
 
         this.player = new Player('Flack', 'blue');
-        this.inputHandler = new InputHandler();
+        this.inputHandler = new InputHandler(this.player, this);
         this.gymEquipment = [
             new Equipment(300, 200, 50, 50, "gray", "benchPress", "Bench Press", 20, 20),
             new Equipment(500, 300, 50, 50, "gray", "squatRack", "Squat Rack", 20, 20),
@@ -23,41 +23,7 @@ export class Game {
 
         this.startGameLoop();
     }
-
-    setupInputListeners() {
-        window.addEventListener('keydown', (e) => {
-            if (e.key === "e" && this.interactableEquipment.length > 0) {
-                this.interactingEquipment = this.interactableEquipment[0];
-                this.startExercise();
-            } else if (e.key === "r" && this.interactingEquipment) {
-                this.performRep();
-            } else if (e.key === "q" && this.interactingEquipment) {
-                this.stopExercise();
-            }
-        });
-    }
-
-    startExercise() {
-        if (!this.interactingEquipment) return;
-        console.log(`Started using ${this.interactingEquipment.name}`);
-        this.interactingEquipment.startSet();
-        this.player.performingExercise = true;
-    }
-
-    stopExercise() {
-        if (!this.interactingEquipment) return;
-        console.log(`Stopped using ${this.interactingEquipment.name}`);
-        this.interactingEquipment.endSet();
-        this.player.performingExercise = false;
-        this.interactingEquipment = null;
-    }
-
-    performRep() {
-        if (!this.interactingEquipment || !this.player.performingExercise) return;
-        this.interactingEquipment.reps++;
-        console.log(`Performed rep on ${this.interactingEquipment.name}: ${this.interactingEquipment.reps}`);
-    }
-
+    
     startGameLoop() {
         const loop = () => {
             this.update();
@@ -68,7 +34,7 @@ export class Game {
     }
 
     update() {
-        this.inputHandler.movePlayer(this.player);
+        this.inputHandler.movePlayer();
         this.interactableEquipment = Collisions.checkCollisions(this.player, this.gymEquipment, this.inputHandler);
     }
 
