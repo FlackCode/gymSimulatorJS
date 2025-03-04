@@ -43,7 +43,7 @@ export class Game {
         this.drawEquipment(this.gymEquipment, this.ctx);
         this.drawInteractionAreas(this.ctx, this.interactableEquipment);
         this.drawPlayer(this.player, this.ctx);
-        UI.drawUI(this.ctx, this.player.dayCount, this.player.level);
+        UI.drawUI(this.ctx, this.player.dayCount, this.player.level, this.interactingEquipment);
     }
 
     drawEquipment(gymEquipment, ctx) {
@@ -58,7 +58,7 @@ export class Game {
     }
 
     drawInteractionAreas(ctx, interactableEquipment) {
-        if (!this.interactableEquipment) return;
+        if (!interactableEquipment) return;
 
         interactableEquipment.forEach(equipment => {
             ctx.fillStyle = "rgba(255, 255, 0, 0.2)";
@@ -76,7 +76,7 @@ export class Game {
             ctx.fillStyle = "black";
             ctx.font = "16px Arial";
             ctx.fillText(text, textX, equipment.y - 10);
-        });     
+        });
     }
 
     clearCanvas(canvas, ctx) {

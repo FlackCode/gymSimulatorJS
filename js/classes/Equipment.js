@@ -47,11 +47,9 @@ export class Equipment {
         } else if (this.reps > 0) {
             strengthGain += 0.25;
         }
-
         strengthGain *= Math.max(0.5, 1 - (this.strength / 100));
 
         this.strength += strengthGain;
-        console.log(this.strength)
         this.fatigue += this.reps * (this.weight / 100);
         this.started = false;
         this.repsInReserve = 0;

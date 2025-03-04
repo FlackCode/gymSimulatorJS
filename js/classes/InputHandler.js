@@ -33,6 +33,7 @@ export class InputHandler {
         } else if (key === "r" && this.game.interactingEquipment) {
             this.player.performRep(this.game.interactingEquipment);
         } else if (key === "q" && this.game.interactingEquipment) {
+            this.game.interactingEquipment = null;
             this.player.stopExercise(this.game.interactingEquipment);
         }
     }

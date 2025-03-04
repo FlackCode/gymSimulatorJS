@@ -15,7 +15,6 @@ export class Collisions {
                 }
             }
         });
-
         return interactableEquipment;
     }
 }

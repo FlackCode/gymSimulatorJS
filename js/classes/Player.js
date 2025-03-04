@@ -1,5 +1,3 @@
-import { UI } from "./UI.js";
-
 export class Player {
     constructor(name, color) {
         this.name = name;
@@ -15,90 +13,51 @@ export class Player {
 
         this.performingExercise = false;
         this.performedExercises = [];
-        this.running = false;
-    }
-
-    startDay() {
-        this.running = true;
-        this.dayCount++;
-        UI.updateDay(this.dayCount);
-        UI.hideSummary();
-        startBtn.textContent = 'End Day';
-    }
-
-    endDay() {
-        this.running = false;
-        UI.showSummary(this.performedExercises);
-        this.gainXP(this.dayCount * 5 + this.performedExercises.length * 2);
-        this.resetFatigue();
-        this.performedExercises = [];
-        startBtn.textContent = 'Start Day';
+        this.canMove = true;
     }
 
     gainXP(amount) {
         this.xp += amount;
         let xpRequired = 10 * (this.level ** 2);
-        console.log(`Gained ${this.xp} XP. ${xpRequired - this.xp} XP required for next level.`);
         while (this.xp >= xpRequired) {
             this.xp -= xpRequired;
             this.level++;
             xpRequired = 10 * (this.level ** 2);
         }
-
-        UI.updateLevel(this.level);
     }
 
     startExercise(interactingEquipment) {
         if (!interactingEquipment) return;
         this.centerPlayer(this, interactingEquipment);
-        //this.interactingEquipment.startSet();
-        //this.player.performingExercise = true;
+        interactingEquipment.startSet();
+        this.performingExercise = true;
     }
+
     performRep(interactingEquipment) {
-        console.log("Performing rep")
         if (!interactingEquipment || !this.performingExercise) return;
+
+        if (interactingEquipment.reps >= interactingEquipment.maxReps) {
+            console.log("Muscle failure! Can't do more reps.");
+            interactingEquipment.fatigue += 0.5;
+            return;
+        }
+
         interactingEquipment.reps++;
-        console.log(`Performed rep on ${interactingEquipment.name}: ${interactingEquipment.reps}`);
+        this.gainXP(1);
     }
 
     stopExercise(interactingEquipment) {
-        if (!this.interactingEquipment) return;
-        console.log(`Stopped using ${this.interactingEquipment.name}`);
-        this.interactingEquipment.endSet();
-        this.player.performingExercise = false;
-        this.interactingEquipment = null;
+        if (!interactingEquipment) return;
+        console.log(`Stopped using ${interactingEquipment.name}`);
+        this.performedExercises.push({
+            fatigue: interactingEquipment.fatigue,
+            name: interactingEquipment.name, 
+            reps: interactingEquipment.reps
+        });
+        interactingEquipment.endSet();
+        this.performingExercise = false;
+        interactingEquipment = null;
     }
-
-    // performRep() {
-    //     if (!this.performingExercise || this.currentExercise === this.exercises.nullExercise) {
-    //         console.log("No active exercise.");
-    //         return;
-    //     }
-
-    //     if (this.currentExercise.reps >= this.currentExercise.maxReps) {
-    //         console.log("Muscle failure! Can't do more reps.");
-    //         this.currentExercise.fatigue += 0.5;
-    //         return;
-    //     }
-
-    //     this.currentExercise.reps++;
-    //     this.gainXP(1);
-    //     UI.updateReps(this.currentExercise.reps);
-    // }
-
-    // stopExercising(exercise) {
-    //     this.performingExercise = false;
-    //     this.performedExercises.push({
-    //             fatigue: exercise.fatigue,
-    //             name: exercise.name, 
-    //             reps: exercise.reps
-    //     });
-    //     exercise.endSet();
-    //     UI.updateReps(0);
-    //     UI.toggleWeightDisplay(false);
-    //     UI.toggleRepButton(false);
-    //     console.log(`${this.name} stopped ${exercise.name}ing`);
-    // }
 
     resetFatigue() {
         this.performedExercises.forEach(performedExercise => {
@@ -112,7 +71,6 @@ export class Player {
             console.log("Cannot change weight during an active set.");
         } else {
             this.currentExercise.addWeight(amount);
-            UI.updateWeight(this.currentExercise.weight);
         }
     }
 
@@ -121,7 +79,6 @@ export class Player {
             console.log("Cannot change weight during an active set.");
         } else {
             this.currentExercise.removeWeight(amount);
-            UI.updateWeight(this.currentExercise.weight);
         }
     }
 
