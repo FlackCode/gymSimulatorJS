@@ -20,14 +20,16 @@ export class InputHandler {
     }
 
     movePlayer() {
-        if (this.keys["w"]) this.player.y -= this.player.speed;
-        if (this.keys["a"]) this.player.x -= this.player.speed;
-        if (this.keys["s"]) this.player.y += this.player.speed;
-        if (this.keys["d"]) this.player.x += this.player.speed;
+        if (this.player.canMove) {
+            if (this.keys["w"]) this.player.y -= this.player.speed;
+            if (this.keys["a"]) this.player.x -= this.player.speed;
+            if (this.keys["s"]) this.player.y += this.player.speed;
+            if (this.keys["d"]) this.player.x += this.player.speed;
+        }
     }
 
     handleKeyPress(key) {
-        if (key === "e" && this.game.interactableEquipment.length > 0) {
+        if (key === "e" && this.game.interactableEquipment.length > 0 && !this.game.interactingEquipment) {
             this.game.interactingEquipment = this.game.interactableEquipment[0];
             this.player.startExercise(this.game.interactingEquipment);
         } else if (key === "r" && this.game.interactingEquipment) {

@@ -27,6 +27,7 @@ export class Player {
     }
 
     startExercise(interactingEquipment) {
+        this.canMove = false;
         if (!interactingEquipment) return;
         this.centerPlayer(this, interactingEquipment);
         interactingEquipment.startSet();
@@ -47,6 +48,7 @@ export class Player {
     }
 
     stopExercise(interactingEquipment) {
+        this.canMove = true;
         if (!interactingEquipment) return;
         console.log(`Stopped using ${interactingEquipment.name}`);
         this.performedExercises.push({

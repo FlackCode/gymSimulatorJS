@@ -43,12 +43,13 @@ export class Game {
         this.drawEquipment(this.gymEquipment, this.ctx);
         this.drawInteractionAreas(this.ctx, this.interactableEquipment);
         this.drawPlayer(this.player, this.ctx);
-        UI.drawUI(this.ctx, this.player.dayCount, this.player.level, this.interactingEquipment);
+        UI.drawUI(this.ctx, this.player.dayCount, this.player.level, this.interactingEquipment, this.gymEquipment, this.interactableEquipment);
     }
 
     drawEquipment(gymEquipment, ctx) {
         gymEquipment.forEach(equipment => {
-            equipment.draw(ctx);
+            const isInteractable = this.interactableEquipment.includes(equipment);
+            equipment.draw(ctx, isInteractable);
         });
     }
 
@@ -68,14 +69,6 @@ export class Game {
                 equipment.width + equipment.interactionRadius,
                 equipment.height + equipment.interactionRadius
             );
-
-            const text = `Press E to use ${equipment.name}`;
-            const textWidth = ctx.measureText(text).width;
-            const textX = equipment.x + equipment.width / 2 - textWidth / 2;
-
-            ctx.fillStyle = "black";
-            ctx.font = "16px Arial";
-            ctx.fillText(text, textX, equipment.y - 10);
         });
     }
 
