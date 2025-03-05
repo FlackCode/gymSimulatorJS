@@ -36,7 +36,19 @@ export class InputHandler {
             this.player.performRep(this.game.interactingEquipment);
         } else if (key === "q" && this.game.interactingEquipment) {
             this.player.stopExercise(this.game.interactingEquipment);
+        } else if (key === "Enter" && this.isPlayerOnDayAdvanceTile()) {
+            this.game.advanceDay();
         }
+    }
+
+    isPlayerOnDayAdvanceTile() {
+        const {x, y, width, height} = this.game.dayAdvanceTile;
+        return (
+            this.player.x + this.player.width > x &&
+            this.player.x < x + width &&
+            this.player.y + this.player.height > y &&
+            this.player.y < y + height
+        );
     }
 
     wasKeyPressed(key) {

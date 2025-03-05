@@ -2,6 +2,7 @@ import { Collisions } from "./Collisions.js";
 import { Equipment } from "./Equipment.js";
 import { InputHandler } from "./InputHandler.js";
 import { Player } from "./Player.js";
+import { Tile } from "./Tile.js";
 import { UI } from "./UI.js";
 
 export class Game {
@@ -17,6 +18,8 @@ export class Game {
             new Equipment(300, 200, 50, 50, "gray", "benchPress", "Bench Press", 20, 20),
             new Equipment(500, 300, 50, 50, "gray", "squatRack", "Squat Rack", 20, 20),
         ];
+        this.dayAdvanceTile = new Tile(200, 200, 50, 50, "yellow", "dayAdvance");
+
         this.interactableEquipment = [];
 
         this.interactingEquipment = null;
@@ -40,6 +43,7 @@ export class Game {
 
     draw() {
         this.clearCanvas(this.canvas, this.ctx);
+        this.dayAdvanceTile.draw(this.ctx);
         this.drawEquipment(this.gymEquipment, this.ctx);
         this.drawInteractionAreas(this.ctx, this.interactableEquipment);
         this.drawPlayer(this.player, this.ctx);
@@ -76,5 +80,10 @@ export class Game {
 
     clearCanvas(canvas, ctx) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    advanceDay() {
+        this.player.dayCount++;
+        this.player.resetFatigue();
     }
 }
