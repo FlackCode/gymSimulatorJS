@@ -30,24 +30,36 @@ export class Player {
     }
 
     startExercise(interactingEquipment) {
-        this.canMove = false;
         if (!interactingEquipment) return;
-        this.centerPlayer(this, interactingEquipment);
-        interactingEquipment.startSet();
-        this.performingExercise = true;
+        if (this.performingExercise) return;
+
+        if (Math.ceil(interactingEquipment.fatigue) >= 10) {
+            console.log(`${this.name} is too fatigued to perform this exercise.`);
+            this.stopExerciseCallback();
+            return;
+        }
+
+        if (Math.ceil(interactingEquipment.fatigue) < 10) {
+            this.canMove = false;
+            if (!interactingEquipment) return;
+            this.centerPlayer(this, interactingEquipment);
+            interactingEquipment.startSet();
+            this.performingExercise = true;
+        }
     }
 
     performRep(interactingEquipment) {
         if (!interactingEquipment || !this.performingExercise) return;
 
-        if (interactingEquipment.reps >= interactingEquipment.maxReps) {
+        if (interactingEquipment.reps + 1 >= interactingEquipment.maxReps) {
             this.stopExercise(interactingEquipment);
             console.log("Muscle failure! Can't do more reps.");
-            interactingEquipment.fatigue += 0.5;
+            interactingEquipment.fatigue += 1;
             return;
         }
 
         interactingEquipment.reps++;
+        interactingEquipment.fatigue += 0.5;
         this.gainXP(1);
 
         if (interactingEquipment.reps === interactingEquipment.maxReps) {
@@ -60,14 +72,11 @@ export class Player {
 
         console.log(`Stopped using ${interactingEquipment.name}`);
 
-        console.log(interactingEquipment)
-
         this.performedExercises.push({
             fatigue: interactingEquipment.fatigue,
             name: interactingEquipment.name, 
             reps: interactingEquipment.reps
         });
-        console.log(this.performedExercises)
         interactingEquipment.endSet();
         this.performingExercise = false;
         this.canMove = true;

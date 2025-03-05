@@ -25,21 +25,23 @@ export class UI {
         ctx.fillText(welcomeText, ctx.canvas.width / 2 - ctx.measureText(welcomeText).width / 2, 30);
         
         if (interactingEquipment) {
-            const { name, maxReps, reps } = interactingEquipment;
+            const { name, maxReps, reps, fatigue, maxFatigue } = interactingEquipment;
             ctx.fillText(`Using: ${name}`, 10, 100);
             ctx.fillText(`Reps: ${reps}/${maxReps}`, 10, 120);
-        }
+            ctx.fillText(`Fatigue: ${fatigue.toFixed(2)}/${maxFatigue}`, 10, 140);
 
-        gymEquipment.forEach(equipment => {
-            const fatigueMeterX = equipment.x;
-            const fatigueMeterY = equipment.y - 10;
-            const fatigueBarWidth = equipment.width;
-            const fatigueBarHeight = 10;
-            const fatigueProgress = (equipment.fatigue / equipment.maxFatigue) * fatigueBarWidth;
+            const fatigueMeterX = 10;
+            const fatigueMeterY = 145;
+            const fatigueBarWidth = 100;
+            const fatigueBarHeight = 20;
+            const fatigueProgress = (fatigue / maxFatigue) * fatigueBarWidth;
+
+            ctx.fillStyle = 'lightgray';
+            ctx.fillRect(fatigueMeterX, fatigueMeterY, fatigueBarWidth, fatigueBarHeight);
 
             ctx.fillStyle = 'red';
-            ctx.fillRect(fatigueMeterX, fatigueMeterY, fatigueProgress, fatigueBarHeight);
-        });
+            ctx.fillRect(fatigueMeterX + 2, fatigueMeterY + 2, fatigueProgress, fatigueBarHeight - 5);
+        }
 
         ctx.font = '16px Arial';
         gymEquipment.forEach(equipment => {

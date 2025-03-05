@@ -30,14 +30,25 @@ export class Equipment {
     //Logic functions
     calculateMaxReps() {
         const fatigueFactor = 0.15;
-        return Math.floor(this.strength / (this.weight * fatigueFactor * (0.5 + this.fatigue)));
+        const safeFatigue = Math.min(this.fatigue, this.maxFatigue);
+        const effectiveWeight = Math.max(this.weight, 1);
+    
+        let reps = this.strength / (effectiveWeight * fatigueFactor * (1 + safeFatigue));
+        reps = Math.max(0, Math.floor(reps));
+    
+        return reps;
     }
 
     startSet() {
         this.maxReps = this.calculateMaxReps();
-        console.log(`Starting set of ${this.name}`);
-        this.started = true;
-        this.reps = 0;
+        if (this.maxReps > 0) {
+            console.log(`Starting set of ${this.name}`);
+            this.started = true;
+            this.reps = 0;
+        } else {
+            console.log(`Too fatigued to continue.`);
+            this.fatigue = Math.min(this.fatigue + 1, this.maxFatigue);
+        }
     }
 
     endSet() {
@@ -51,9 +62,12 @@ export class Equipment {
         strengthGain *= Math.max(0.5, 1 - (this.strength / 100));
 
         this.strength += strengthGain;
-        this.fatigue += (this.reps / this.maxReps) * (this.weight / 200);
+        if (this.maxReps > 0) {
+            this.fatigue += (this.reps / this.maxReps) * (this.weight / 50);
+        } else {
+            this.fatigue += 0.5;
+        }
         this.fatigue = Math.min(this.fatigue, this.maxFatigue);
-        console.log(this.fatigue)
         this.started = false;
         this.repsInReserve = 0;
         this.reps = 0;
