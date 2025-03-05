@@ -41,6 +41,14 @@ export class Equipment {
 
     startSet() {
         this.maxReps = this.calculateMaxReps();
+
+        //Automatic weight regulation
+        if (this.maxReps < 3) { 
+            this.removeWeight(1.25);
+            this.maxReps = this.calculateMaxReps();
+            console.log(`Weight decreased to ${this.weight.toFixed(2)}`);
+        }
+
         if (this.maxReps > 0) {
             console.log(`Starting set of ${this.name}`);
             this.started = true;
@@ -62,6 +70,13 @@ export class Equipment {
         strengthGain *= Math.max(0.5, 1 - (this.strength / 100));
 
         this.strength += strengthGain;
+
+        //Progressive overload
+        if (this.reps >= this.maxReps - 1) {
+            this.addWeight(1.25);
+            console.log(`Weight increased to ${this.weight.toFixed(2)}`);
+        }
+
         if (this.maxReps > 0) {
             this.fatigue += (this.reps / this.maxReps) * (this.weight / 50);
         } else {

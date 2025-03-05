@@ -59,7 +59,7 @@ export class Player {
         }
 
         interactingEquipment.reps++;
-        interactingEquipment.fatigue += 0.5;
+        interactingEquipment.fatigue += 0.1;
         this.gainXP(1);
 
         if (interactingEquipment.reps === interactingEquipment.maxReps) {
@@ -71,13 +71,13 @@ export class Player {
         if (!interactingEquipment) return;
 
         console.log(`Stopped using ${interactingEquipment.name}`);
-
+        
+        interactingEquipment.endSet();
         this.performedExercises.push({
             fatigue: interactingEquipment.fatigue,
             name: interactingEquipment.name, 
             reps: interactingEquipment.reps
         });
-        interactingEquipment.endSet();
         this.performingExercise = false;
         this.canMove = true;
 
@@ -86,7 +86,9 @@ export class Player {
 
     resetFatigue() {
         this.performedExercises.forEach(performedExercise => {
+            console.log(performedExercise)
             performedExercise.fatigue = 0;
+            console.log(performedExercise)
         });
         console.log("Fatigue reset.");
     }
