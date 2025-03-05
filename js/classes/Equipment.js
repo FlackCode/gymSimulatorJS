@@ -19,6 +19,7 @@ export class Equipment {
         this.maxReps = 0;
         this.repsInReserve = 0;
         this.fatigue = 0;
+        this.maxFatigue = 10;
     }
     //Draws the equipment on the canvas
     draw(ctx) {
@@ -29,7 +30,7 @@ export class Equipment {
     //Logic functions
     calculateMaxReps() {
         const fatigueFactor = 0.15;
-        return Math.floor(this.strength / (this.weight * fatigueFactor * (1 + this.fatigue)));
+        return Math.floor(this.strength / (this.weight * fatigueFactor * (0.5 + this.fatigue)));
     }
 
     startSet() {
@@ -42,7 +43,7 @@ export class Equipment {
     endSet() {
         this.repsInReserve = this.maxReps - this.reps;
         let strengthGain = 0;
-        if (this.repsInReserve == 1 && (this.maxReps <=6 && this.maxReps >= 4)) {
+        if (this.repsInReserve == 1 && (this.maxReps <= 6 && this.maxReps >= 4)) {
             strengthGain += 1.25 + 1 * (this.weight / 100);
         } else if (this.reps > 0) {
             strengthGain += 0.25;
@@ -50,7 +51,9 @@ export class Equipment {
         strengthGain *= Math.max(0.5, 1 - (this.strength / 100));
 
         this.strength += strengthGain;
-        this.fatigue += this.reps * (this.weight / 100);
+        this.fatigue += (this.reps / this.maxReps) * (this.weight / 200);
+        this.fatigue = Math.min(this.fatigue, this.maxFatigue);
+        console.log(this.fatigue)
         this.started = false;
         this.repsInReserve = 0;
         this.reps = 0;

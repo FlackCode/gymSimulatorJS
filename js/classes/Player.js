@@ -60,11 +60,14 @@ export class Player {
 
         console.log(`Stopped using ${interactingEquipment.name}`);
 
+        console.log(interactingEquipment)
+
         this.performedExercises.push({
             fatigue: interactingEquipment.fatigue,
             name: interactingEquipment.name, 
             reps: interactingEquipment.reps
         });
+        console.log(this.performedExercises)
         interactingEquipment.endSet();
         this.performingExercise = false;
         this.canMove = true;

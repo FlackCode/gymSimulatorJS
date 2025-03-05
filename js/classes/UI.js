@@ -30,6 +30,17 @@ export class UI {
             ctx.fillText(`Reps: ${reps}/${maxReps}`, 10, 120);
         }
 
+        gymEquipment.forEach(equipment => {
+            const fatigueMeterX = equipment.x;
+            const fatigueMeterY = equipment.y - 10;
+            const fatigueBarWidth = equipment.width;
+            const fatigueBarHeight = 10;
+            const fatigueProgress = (equipment.fatigue / equipment.maxFatigue) * fatigueBarWidth;
+
+            ctx.fillStyle = 'red';
+            ctx.fillRect(fatigueMeterX, fatigueMeterY, fatigueProgress, fatigueBarHeight);
+        });
+
         ctx.font = '16px Arial';
         gymEquipment.forEach(equipment => {
             if (!interactingEquipment) {
@@ -38,6 +49,7 @@ export class UI {
                 const textWidth = ctx.measureText(text).width;
                 const textX = equipment.x + equipment.width / 2 - textWidth / 2;
                 const textY = equipment.y - 10;
+                ctx.fillStyle = 'black';
                 ctx.fillText(text, textX, textY);
             }
         });

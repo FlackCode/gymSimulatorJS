@@ -49,6 +49,11 @@ export class Game {
     drawEquipment(gymEquipment, ctx) {
         gymEquipment.forEach(equipment => {
             const isInteractable = this.interactableEquipment.includes(equipment);
+            if (this.interactingEquipment === equipment) {
+                ctx.strokeStyle = 'purple';
+                ctx.lineWidth = 6;
+                ctx.strokeRect(equipment.x, equipment.y, equipment.width, equipment.height);
+            }
             equipment.draw(ctx, isInteractable);
         });
     }
@@ -62,14 +67,11 @@ export class Game {
         if (!interactableEquipment) return;
 
         interactableEquipment.forEach(equipment => {
-            ctx.fillStyle = "rgba(255, 255, 0, 0.2)";
-            ctx.fillRect(
-                equipment.x - equipment.interactionRadius / 2,
-                equipment.y - equipment.interactionRadius / 2,
-                equipment.width + equipment.interactionRadius,
-                equipment.height + equipment.interactionRadius
-            );
-        });
+            if (this.interactingEquipment !== equipment) {
+                ctx.strokeStyle = "green";
+                ctx.lineWidth = 2;
+                ctx.strokeRect(equipment.x, equipment.y, equipment.width, equipment.height)
+        }});
     }
 
     clearCanvas(canvas, ctx) {
