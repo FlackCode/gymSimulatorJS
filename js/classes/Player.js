@@ -22,6 +22,7 @@ export class Player {
         this.currentExercise = null;
         this.reps = 0;
         this.maxReps = 0;
+        this.repsInReserve = 0;
 
         this.strength = new Strength();
         this.fatigue = new Fatigue();
@@ -82,7 +83,7 @@ export class Player {
         }
 
         this.reps++;
-        this.fatigue.increaseFatigue(this.currentExercise.muscleGroup, 0.1);
+        this.fatigue.increaseFatigue(this.currentExercise.muscleGroup, 2/this.maxReps);
         this.gainXP(1);
 
         if (this.reps === this.maxReps) {
@@ -100,8 +101,8 @@ export class Player {
             name: this.currentExercise.name, 
             reps: this.currentExercise.reps
         });
-
-        const strengthGain = this.strength.calculateStrengthGain(this.currentExercise);
+        this.repsInReserve = this.maxReps - this.reps;
+        const strengthGain = this.strength.calculateStrengthGain(this, this.currentExercise);
         this.strength.increaseStrength(this.currentExercise.muscleGroup, strengthGain);
 
         //Progressive overload

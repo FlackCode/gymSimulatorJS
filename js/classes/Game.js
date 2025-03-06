@@ -84,6 +84,6 @@ export class Game {
 
     advanceDay() {
         this.player.dayCount++;
-        this.player.resetFatigue();
+        this.player.fatigue.resetFatigue();
     }
 }
