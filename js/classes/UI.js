@@ -25,7 +25,9 @@ export class UI {
         ctx.fillText(welcomeText, ctx.canvas.width / 2 - ctx.measureText(welcomeText).width / 2, 30);
         
         if (interactingEquipment) {
-            const { name, fatigue, maxFatigue } = interactingEquipment;
+            const { name } = interactingEquipment;
+            const { maxFatigue } = player.fatigue
+            const fatigue = player.fatigue.getFatigue(interactingEquipment.muscleGroup);
             const { reps, maxReps } = player;
             ctx.fillText(`Using: ${name}`, 10, 100);
             ctx.fillText(`Reps: ${reps}/${maxReps}`, 10, 120);

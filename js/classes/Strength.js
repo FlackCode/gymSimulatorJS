@@ -1,12 +1,12 @@
 export class Strength {
     constructor() {
         this.muscleGroups = {
-            chest: 10,
-            back: 10,
-            arms: 10,
-            legs: 10,
-            core: 10,
-            shoulders: 10
+            chest: 20,
+            back: 20,
+            arms: 20,
+            legs: 20,
+            core: 20,
+            shoulders: 20
         };
     }
 

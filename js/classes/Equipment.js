@@ -13,8 +13,6 @@ export class Equipment {
 
         //Exercise related variables (for logic purposes)
         this.weight = weight;
-        this.fatigue = 0;
-        this.maxFatigue = 10;
     }
     //Draws the equipment on the canvas
     draw(ctx) {
