@@ -1,3 +1,5 @@
+import { Strength } from "./Strength.js";
+
 export class Player {
     constructor(name, color, stopExerciseCallback) {
         this.name = name;
@@ -16,6 +18,11 @@ export class Player {
         this.performingExercise = false;
         this.performedExercises = [];
         this.canMove = true;
+        this.currentExercise = null;
+        this.reps = 0;
+        this.maxReps = 0;
+
+        this.strength = new Strength();
     }
 
     gainXP(amount) {
@@ -29,84 +36,97 @@ export class Player {
         }
     }
 
-    startExercise(interactingEquipment) {
-        if (!interactingEquipment) return;
+    calculateMaxReps(equipment) {
+        if (!equipment) return 0;
+
+        const fatigueFactor = 0.15;
+        const safeFatigue = Math.min(equipment.fatigue, equipment.maxFatigue);
+        const effectiveWeight = Math.max(equipment.weight, 1);
+        const playerStrength = this.strength.getStrength(equipment.muscleGroup);
+
+        let reps = playerStrength / (effectiveWeight * fatigueFactor * (1 + safeFatigue));
+        reps = Math.max(0, Math.floor(reps));
+    
+        return reps;
+
+    }
+
+    startExercise(equipment) {
+        if (!equipment) return;
         if (this.performingExercise) return;
 
-        if (Math.ceil(interactingEquipment.fatigue) >= 10) {
+        if (Math.ceil(equipment.fatigue) >= equipment.maxFatigue) {
             console.log(`${this.name} is too fatigued to perform this exercise.`);
             this.stopExerciseCallback();
             return;
         }
 
-        if (Math.ceil(interactingEquipment.fatigue) < 10) {
-            this.canMove = false;
-            if (!interactingEquipment) return;
-            this.centerPlayer(this, interactingEquipment);
-            interactingEquipment.startSet();
-            this.performingExercise = true;
-        }
+        this.canMove = false;
+        this.centerPlayer(this, equipment);
+        this.currentExercise = equipment;
+        this.maxReps = this.calculateMaxReps(equipment);
+        this.performingExercise = true;
+        this.reps = 0;
     }
 
-    performRep(interactingEquipment) {
-        if (!interactingEquipment || !this.performingExercise) return;
+    performRep() {
+        if (!this.currentExercise || !this.performingExercise) return;
 
-        if (interactingEquipment.reps + 1 >= interactingEquipment.maxReps) {
-            this.stopExercise(interactingEquipment);
+        if (this.reps + 1 >= this.maxReps) {
             console.log("Muscle failure! Can't do more reps.");
-            interactingEquipment.fatigue += 1;
+            this.currentExercise.fatigue += 1;
+            this.stopExercise();
             return;
         }
 
-        interactingEquipment.reps++;
-        interactingEquipment.fatigue += 0.1;
+        this.reps++;
+        this.currentExercise.fatigue += 0.1;
         this.gainXP(1);
 
-        if (interactingEquipment.reps === interactingEquipment.maxReps) {
-            this.stopExercise(interactingEquipment);
-    }
+        if (this.reps === this.maxReps) {
+            this.stopExercise();
+        }
     }
 
-    stopExercise(interactingEquipment) {
-        if (!interactingEquipment) return;
+    stopExercise() {
+        if (!this.currentExercise) return;
 
-        console.log(`Stopped using ${interactingEquipment.name}`);
+        console.log(`Stopped using ${this.currentExercise.name}`);
         
-        interactingEquipment.endSet();
         this.performedExercises.push({
-            fatigue: interactingEquipment.fatigue,
-            name: interactingEquipment.name, 
-            reps: interactingEquipment.reps
+            fatigue: this.currentExercise.fatigue,
+            name: this.currentExercise.name, 
+            reps: this.currentExercise.reps
         });
+
+        const strengthGain = this.strength.calculateStrengthGain(this.currentExercise);
+        this.strength.increaseStrength(this.currentExercise.muscleGroup, strengthGain);
+
+        //Progressive overload
+        if (this.reps >= this.maxReps - 1) {
+            this.currentExercise.addWeight(1.25);
+        }
+
+        //Fatigue calculation
+        if (this.maxReps > 0) {
+            this.currentExercise.fatigue += (this.reps / this.maxReps) * (this.currentExercise.weight / 50);
+        } else {
+            this.currentExercise.fatigue += 0.5;
+        }
+        this.currentExercise.fatigue = Math.min(this.currentExercise.fatigue, this.currentExercise.maxFatigue);
+
         this.performingExercise = false;
         this.canMove = true;
+        this.currentExercise = null;
 
         if (this.stopExerciseCallback) this.stopExerciseCallback();
     }
 
     resetFatigue() {
-        this.performedExercises.forEach(performedExercise => {
-            console.log(performedExercise)
-            performedExercise.fatigue = 0;
-            console.log(performedExercise)
+        this.performedExercises.forEach(exercise => {
+            exercise.fatigue = 0;
         });
         console.log("Fatigue reset.");
-    }
-
-    addWeight(amount = 2.5) {
-        if (this.currentExercise.reps > 0) {
-            console.log("Cannot change weight during an active set.");
-        } else {
-            this.currentExercise.addWeight(amount);
-        }
-    }
-
-    removeWeight(amount = 2.5) {
-        if (this.currentExercise.reps > 0) {
-            console.log("Cannot change weight during an active set.");
-        } else {
-            this.currentExercise.removeWeight(amount);
-        }
     }
 
     centerPlayer(player, equipment) {

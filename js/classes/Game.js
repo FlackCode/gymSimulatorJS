@@ -15,8 +15,8 @@ export class Game {
         this.player = new Player('Flack', 'blue', () => {this.interactingEquipment = null;});
         this.inputHandler = new InputHandler(this.player, this);
         this.gymEquipment = [
-            new Equipment(300, 200, 50, 50, "gray", "benchPress", "Bench Press", 20, 20),
-            new Equipment(500, 300, 50, 50, "gray", "squatRack", "Squat Rack", 20, 20),
+            new Equipment(300, 200, 50, 50, "gray", "benchPress", "Bench Press", 20, 20, "chest"),
+            new Equipment(500, 300, 50, 50, "gray", "squatRack", "Squat Rack", 20, 20, "legs"),
         ];
         this.dayAdvanceTile = new Tile(200, 200, 50, 50, "yellow", "dayAdvance");
 
